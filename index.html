@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>31天情绪和状态记录表</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="page-header">
+    <div class="header-content">
+      <div class="intro-note">
+        <p>本工具仅用于自我记录和沟通整理，所有数据只保存在你当前设备的本机浏览器中，不会上传服务器，也不会接入统计、广告或追踪代码。</p>
+      </div>
+      <div class="mascot-strip">
+        <img class="top-mascot" src="assets/mascot.png" alt="星星小记录员" onerror="this.style.display='none';">
+      </div>
+      <div class="title-row">
+        <div class="title-copy">
+          <h1>31天情绪和状态记录表</h1>
+          <p class="subtitle">这是一个帮助你整理状态线索的小工具。你可以用它记录这一个月的情绪、睡眠、精力、用药和重要事件，方便需要时更清楚地了解自己，也方便就诊或复诊时和医生沟通。</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="chart-section" aria-labelledby="chartTitle">
+      <div class="section-title-row">
+        <h2 id="chartTitle">31天情绪线索图</h2>
+        <span class="soft-label">-5 到 +5</span>
+      </div>
+      <div class="chart-scroll">
+        <svg id="moodChart" class="mood-chart" role="img" aria-label="31天情绪线索图"></svg>
+      </div>
+      <p class="chart-note">这张图不只是记录情绪，也帮助你把睡眠、精力、焦虑、用药和重要事件放在一起看。它不用于诊断，只是帮助你了解自己，也方便需要时和医生沟通。</p>
+    </section>
+
+    <section class="insight-section" aria-labelledby="insightTitle">
+      <h2 id="insightTitle">本月线索提示</h2>
+      <ul id="insightList" class="insight-list"></ul>
+    </section>
+
+    <p id="statusText" class="status" aria-live="polite"></p>
+
+    <section id="records" class="records" aria-label="31天记录"></section>
+
+    <section class="summary-section" aria-labelledby="summaryTitle">
+      <h2 id="summaryTitle">31天情绪和状态总结</h2>
+      <label for="summaryText">自动整理内容</label>
+      <textarea id="summaryText" rows="14" placeholder="点击“生成医生沟通页”后，这里会出现可以复制、打印或继续修改的复诊沟通内容。"></textarea>
+
+      <div class="editable-grid">
+        <label>
+          这段时间最困扰我的事情
+          <textarea id="concernText" rows="4" placeholder="可以写：这段时间最困扰我的是……"></textarea>
+        </label>
+        <label>
+          我最担心的问题
+          <textarea id="worryText" rows="4" placeholder="可以写：我最担心的是……"></textarea>
+        </label>
+        <label>
+          我想问医生
+          <textarea id="questionText" rows="4" placeholder="可以写：我想问医生的是……"></textarea>
+        </label>
+        <label>
+          最近最明显的变化
+          <textarea id="changeText" rows="4" placeholder="生成后会自动整理，你也可以自己修改。"></textarea>
+        </label>
+        <label>
+          如果就诊，建议向医生说明的问题
+          <textarea id="suggestionText" rows="4" placeholder="生成后会自动整理，只作为沟通线索。"></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="记录操作">
+      <h2 class="toolbar-title">记录操作</h2>
+      <button id="saveBtn" type="button" hidden>保存记录</button>
+      <button id="summaryBtn" type="button" hidden>生成医生沟通页</button>
+      <button id="copyBtn" type="button" class="secondary" hidden>复制摘要</button>
+      <button id="clearBtn" type="button" class="secondary">清空记录</button>
+      <button id="printBtn" type="button" class="secondary">打印/另存PDF</button>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    © 31天情绪和状态记录表。头像与页面视觉元素由作者设计，请勿商用或二次分发。
+  </footer>
+
+  <template id="dayTemplate">
+    <article class="day-card">
+      <button class="day-summary" type="button" aria-expanded="false">
+        <span class="day-title"></span>
+        <span class="day-brief"></span>
+      </button>
+
+      <div class="day-body" hidden>
+        <div class="field-grid">
+          <label>
+            日期
+            <input name="date" type="date">
+          </label>
+
+          <label>
+            睡眠时长
+            <input name="sleepHours" type="number" min="0" max="24" step="0.5" placeholder="例如 7.5">
+          </label>
+
+          <label>
+            睡眠质量
+            <select name="sleepQuality">
+              <option value="">请选择</option>
+              <option value="好">好</option>
+              <option value="一般">一般</option>
+              <option value="差">差</option>
+            </select>
+          </label>
+
+          <label>
+            用药情况
+            <select name="medication">
+              <option value="">请选择</option>
+              <option value="按时">按时</option>
+              <option value="漏服">漏服</option>
+              <option value="调整">调整</option>
+              <option value="未服">未服</option>
+              <option value="不确定">不确定</option>
+            </select>
+          </label>
+
+          <label class="slider-field mood-field">
+            情绪指数（-5 到 +5）
+            <input name="mood" type="range" min="-5" max="5" step="1" value="0">
+            <span class="scale-readout">
+              <span class="range-value">0</span>
+              <span class="scale-word">平稳</span>
+            </span>
+          </label>
+
+          <label class="slider-field">
+            精力水平（0 到 5）
+            <input name="energy" type="range" min="0" max="5" step="1" value="0">
+            <span class="scale-readout">
+              <span class="range-value">0</span>
+              <span class="scale-word">几乎动不了</span>
+            </span>
+          </label>
+
+          <label class="slider-field">
+            焦虑程度（0 到 5）
+            <input name="anxiety" type="range" min="0" max="5" step="1" value="0">
+            <span class="scale-readout">
+              <span class="range-value">0</span>
+              <span class="scale-word">不明显</span>
+            </span>
+          </label>
+        </div>
+
+        <fieldset>
+          <legend>身体反应</legend>
+          <div class="chips symptoms"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>特殊事件</legend>
+          <div class="chips events"></div>
+        </fieldset>
+
+        <label class="full-field">
+          一句话记录
+          <textarea name="note" rows="3" placeholder="例如：今天情绪起伏明显，下午比较焦虑。"></textarea>
+        </label>
+      </div>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
