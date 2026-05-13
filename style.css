@@ -75,9 +75,24 @@ body::after {
 
 @media (max-width: 480px) {
   body {
+    background:
+      linear-gradient(
+        rgba(10, 18, 34, 0.10),
+        rgba(10, 18, 34, 0.36)
+      ),
+      url("assets/star-bg.png") center top / 100% auto no-repeat;
+    background-color: #101b31;
     background-attachment: scroll;
-    background-position: center top;
   }
+
+  body::before {
+    opacity: 0.18;
+  }
+
+  body::after {
+    opacity: 0.28;
+  }
+  
 
   .mascot-strip {
     justify-content: flex-end;
